@@ -159,7 +159,6 @@ void MainWindow::readSerialport()
             templine.x.append(x);
             templine.y.append(y);
             line_list.append(templine);
-            ui->widget->graph(line_id)->setData(templine.x,templine.y,true);
         }
         else
         {
