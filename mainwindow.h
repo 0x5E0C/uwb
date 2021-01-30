@@ -27,9 +27,9 @@ public:
 private:
     Ui::MainWindow *ui;
     QTimer *timer = new QTimer(this);
-    QList<QString> serialport_list;
-    bool serial_state;
-    QString  serial_choice;
+    QList<QString> serialport_list;             //可用串口列表
+    bool serial_state;                          //串口状态
+    QString  serial_choice;                     //从串口下拉列表中选择的串口名
     QSerialPort *serialport = new QSerialPort();
     QList<int> id_list;
     int max_line_id;
@@ -42,6 +42,7 @@ private:
     void widgetInit();
     bool openSerialport();
     void closeSerialport();
+    void writeSerialport(quint8 *data,int count);
     int addLine(int id);
 
 private slots:
@@ -49,5 +50,6 @@ private slots:
    void searchSerialport();
    void recordSerialChoice(int choice);
    void readSerialport();
+   void syncCoordinateAxis();
 };
 #endif // MAINWINDOW_H

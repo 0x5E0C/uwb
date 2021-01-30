@@ -60,7 +60,7 @@
      </rect>
     </property>
     <property name="currentText">
-     <string>9600</string>
+     <string>1382400</string>
     </property>
     <item>
      <property name="text">
@@ -181,6 +181,19 @@
       <string/>
      </property>
     </item>
+   </widget>
+   <widget class="QPushButton" name="syncButton">
+    <property name="geometry">
+     <rect>
+      <x>850</x>
+      <y>180</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>同步坐标轴</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
