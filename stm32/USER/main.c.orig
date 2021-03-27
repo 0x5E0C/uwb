@@ -1,0 +1,17 @@
+#include "sys.h"
+#include "usart.h"
+#include "delay.h"
+
+int main()
+{
+    Stm32_Clock_Init(9);
+    delay_init(72);
+    USART1_Init(9600);
+while(1);
+}
+
+
+
+
+
+

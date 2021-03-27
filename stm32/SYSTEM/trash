@@ -1,0 +1,214 @@
+
+
+
+blue:
+Enter_Map();
+	Set_Axis(3,0);
+	Move_By_Tracing(1,1,40,Y_First,no_stop);
+	Move_Distance(-40,40,0,618);
+	while(Button1==0 && Button2==0)
+	{
+		Global_Motion.Vx=0;
+		Global_Motion.Vy=40;
+	}
+	delay_ms(500);
+	Correct_Angle(0);
+	Global_Motion.Vx=Caculate_Gray_PID(Gray1);
+	Global_Motion.Vy=0;
+	while(Global_Motion.Vx!=0)
+	{	
+		Global_Motion.Vx=Caculate_Gray_PID(Gray1);
+		Global_Motion.Vy=0;
+		Set_Angle(0,Tracing_Mode);
+		Ask_Gray1();
+	}
+	Stop(500);
+	Move_Distance(0,-40,0,350);
+	Move_Distance(40,0,0,780);
+	Set_Axis(1,1);
+	Clear_Encoder();
+	Move_By_Tracing(1,2,40,Y_First,stop);
+	Move_By_Tracing(4,3,40,X_First,no_stop);
+	Move_Distance(0,40,0,390);
+	Stop(500);
+	Move_Distance(-40,0,0,780);
+	Set_Axis(3,4);
+	Clear_Encoder();
+	Move_By_Tracing(3,1,40,Y_First,no_stop);
+	Move_Distance(-18,-40,0,994);
+	Stop(500);
+	while(1);
+	
+	
+	
+	Enter_Map();
+	Set_Axis(1,0);
+	Move_Distance(-60,60,0,552,No_Tracing);
+	Global_Motion.Vx=0;
+	Move_By_Tracing(1,3,Global_Speed,Y_First,no_stop);
+	Move_Distance(0,Global_Speed,0,390,Y_Tracing);
+	Stop(500);
+	Move_Distance(-40,0,0,810,No_Tracing);
+	Stop(500);
+	Set_Angle(180,Rotation_Mode);
+	Stop(500);
+	Set_Angle(0,Rotation_Mode);
+	Correct_Gyroscope(0);	
+	Stop(500);	
+	Move_Distance(0,40,0,350,No_Tracing);
+	Move_Distance(40,0,0,810,No_Tracing);
+	Move_By_Tracing(3,5,Global_Speed,Y_First,stop);
+	Set_Angle(180,Rotation_Mode);
+	Move_By_Tracing(3,2,Global_Speed,Y_First,stop);
+	Move_Distance(0,Global_Speed,0,390,Y_Tracing);
+	Stop(500);
+	Move_Distance(40,0,0,780,No_Tracing);
+	Stop(500);
+	Move_Distance(-40,0,0,780,No_Tracing);
+	Stop(500);
+	podf_reinit(&PODF_Vx, 0, 780*1.5, 0, 0, 0, 0, millis, millis + 5500);
+	podf_reinit(&PODF_Vy, 0, 780*2, 0, 0, 0, 0, millis, millis + 5500);
+    while(millis < PODF_Vy.t1)
+    {
+        Global_Motion.Vx = -podf_cal(&PODF_Vx) * 20 * 1560 / 3.14 / 58;
+        Global_Motion.Vy = -podf_cal(&PODF_Vy) * 20 * 1560 / 3.14 / 58;
+		Set_Angle(0,Tracing_Mode);
+		Ask_Gray1();
+	}
+	Stop(500);	
+	
+	
+red:	
+	Stm32_Clock_Init(9);
+    delay_init(72);
+    BSP_Init();
+    PID_Total_Init();
+	Enter_Map();
+	Set_Axis(1,0);
+	Move_Distance(-60,60,0,552,No_Tracing);
+	Global_Motion.Vx=0;
+	Move_By_Tracing(1,3,Global_Speed,Y_First,no_stop);
+	Move_Distance(0,Global_Speed,0,390,Y_Tracing);
+	Stop(500);
+	Move_Distance(-40,0,0,810,No_Tracing);
+	Stop(500);
+	Set_Angle(180,Rotation_Mode);
+	Stop(500);	
+	while(Button1==0 || Button2==0)
+	{
+		Global_Motion.Vx=0;
+		Global_Motion.Vy=40;
+	}
+	delay_ms(100);
+	while(Global_Motion.Vx!=0)
+	{	
+		Global_Motion.Vx=Caculate_Gray_PID(Gray1);
+		Global_Motion.Vy=0;
+		Set_Angle(180,Tracing_Mode);
+		Ask_Gray1();
+	}
+	Stop(500);
+	Move_Distance(0,40,180,340,No_Tracing);
+	Stop(500);
+	Set_Angle(0,Rotation_Mode);
+	Stop(500);	
+	Correct_Gyroscope();
+	Move_Distance(0,-40,gyro.Degrees_0,340,No_Tracing);
+	Stop(500);
+	Move_Distance(40,0,gyro.Degrees_0,810,No_Tracing);
+	Move_By_Tracing(1,5,Global_Speed,Y_First,stop);
+	Move_By_Tracing(3,5,Global_Speed,Y_First,stop);
+	Set_Angle(gyro.Degrees_180,Rotation_Mode);
+	Move_By_Tracing(3,2,Global_Speed,Y_First,no_stop);
+	Move_Distance(0,Global_Speed,gyro.Degrees_180,390,Y_Tracing);
+	Stop(500);
+	Move_Distance(-40,0,gyro.Degrees_180,780,No_Tracing);
+	Stop(500);
+	Move_Distance(40,0,gyro.Degrees_180,780,No_Tracing);
+	Stop(500);
+	podf_reinit(&PODF_Vx, 0, 780*1.5, 0, 0, 0, 0, millis, millis + 5500);
+	podf_reinit(&PODF_Vy, 0, 780*2, 0, 0, 0, 0, millis, millis + 5500);
+    while(millis < PODF_Vy.t1)
+    {
+        Global_Motion.Vx = podf_cal(&PODF_Vx) * 20 * 1560 / 3.14 / 58;
+        Global_Motion.Vy = podf_cal(&PODF_Vy) * 20 * 1560 / 3.14 / 58;
+		Set_Angle(gyro.Degrees_180,Tracing_Mode);
+		Ask_Gray1();
+	}
+	Stop(500);
+	while(1);
+	
+	
+	
+	
+	
+	
+	now_angle=gyro.yaw;
+		now_angle=Change_Angle_Format(now_angle);
+		target=Change_Angle_Format(target);
+		if(now_angle-target<0)
+		{
+			diretion=-1;
+		}
+		else
+		{
+			diretion=1;
+		}
+		while(fabs(now_angle-target)>err)
+		{
+			now_angle=gyro.yaw;
+			now_angle=Change_Angle_Format(now_angle);
+			target=Change_Angle_Format(target);
+			if(now_angle-target<0)
+			{
+				diretion=-1;
+			}
+			else
+			{
+				diretion=1;
+			}
+			Global_Motion.W=diretion*20;
+		}
+		time=millis;
+		while(millis<time+1500)
+		{
+			now_angle=gyro.yaw;
+			now_angle=Change_Angle_Format(now_angle);
+			target=Change_Angle_Format(target);
+			if(now_angle-target<0)
+			{
+				diretion=-1;
+			}
+			else
+			{
+				diretion=1;
+			}
+			Global_Motion.W=Caculate_Gyro_PID(now_angle,target);
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

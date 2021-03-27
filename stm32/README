@@ -1,0 +1,44 @@
+1.文件简述:
+	(1)SYSTEM文件夹存放系统管理文件;
+	   HARDWARE文件夹存放板级外设驱动底层;
+	   CORE文件夹存放基于底层的上层代码与模块驱动代码;
+	(2)bsp.c文件存放着板级外设的初始化、各个pid初始化代码与printf重定向代码;
+	   bsp.h文件包含各板级外设与模块的头文件;
+	(3)priority.h统一管理各个中断优先级,若出现通讯丢包或模块数据解析异常,可在此处调整优先级;
+	(4)陀螺仪、两寻迹板均使用DMA接收,中断时已接收整个数据包;
+	(5)pid.c为pid调节的逻辑代码存放文件;
+	(6)motor.c为底盘电机驱动代码文件,并包含整个底盘的运动逻辑代码;
+	(7)encoder.c为编码器相关代码存放文件,包括用编码器定位的逻辑代码;
+	(8)servo.c为舵机运动代码存放文件;
+	(9)gyroscope.c为陀螺仪相关代码存放文件;
+	(10)gray.c为循迹板相关代码存放文件;
+	(11)map.c中的代码实现在地图中循迹定位,里程计定位功能;
+	(12)podf.c为五次多项式运动方程的公式计算文件;
+	(13)button.c为轻触开关相关代码存放文件;
+	(14)event.c为车子行走过程中的事件储存文件;
+	(15)infrared.c为红外开关相关代码的储存文件;
+	(16)pca9685.c为pca9685模块的驱动代码储存文件;
+	
+2.代码简述:
+	(1)新增pid调节:
+	   (a)分别在pid.h与pid.c里声明与定义一个PID类型的全局变量;
+	   (b)在bsp.c里的PID_Total_Init()函数里赋值P、I、D和限幅的最大值和最小值(不限幅则赋值No_Max和No_Min)，用PID_Init()函数初始化;
+	   (c)用Incremental_PID()函数获取返回的PID计算值(底盘电机PID的Incremental_PID()在TIM6中断中);
+	(2)整车运动:
+	   (a)整辆车的运动状态包含在Global_Motion变量中(声明与定义分别在motor.h、motor.c中);
+	   (b)对Global_Motion.Vx(Vy/W)进行赋值，从而控制车子的X轴(Y轴/旋转)的速度;
+	   (c)Global_Motion.X_Distance(Y_Distance)用于读取编码器定位时X轴(Y轴)走过的距离,用Clear_Encoder()函数清空脉冲数;
+	(3)陀螺仪:
+	   (a)陀螺仪的角度存放在gyro变量中(声明与定义分别在gyroscope.h、gyroscope.c中);
+	   (b)gyro.ax(ay/az)分别为陀螺仪返回的X轴(Y轴/Z轴)的加速度值;
+	   (c)gyro.roll、gyro.pitch、gyro.yaw为陀螺仪返回的角度值,范围为0-360°,控制车子旋转角度用gyro.yaw;
+	(4)函数命名:
+	    bsp.c文件中外设初始化函数名称格式为:(功能)_(外设)_Init(),如接在USART2的寻迹板1的初始化函数名称为Gray1_USART2_Init();
+
+3.程序流程:
+	通过Choose_Color()函数读取红外开关的状态选择工作区颜色;
+	出发后通过Set_Axis(x坐标,y坐标)来设置当前位置坐标;
+	通过Move_By_Tracing(目标x坐标,目标y坐标,行走速度,先走x轴/y轴,到达目标位置后是否停下)函数循迹到达目标位置;
+	通过Move_Distance(x轴速度,y轴速度,角度,是否循迹)函数读取编码器走一段距离;
+	通过Set_Angle(角度,循迹固定角度模式/旋转模式)固定/旋转角度;
+	通过Servo_Event(事件)函数控制舵机;
