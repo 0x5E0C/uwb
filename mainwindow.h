@@ -6,6 +6,8 @@
 #include <QSerialPortInfo>
 #include <QDebug>
 #include "qcustomplot.h"
+#include "process.h"
+#include "public.h"
 
 #define OPENSTATE   0
 #define CLOSESTATE  1
@@ -26,10 +28,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    process *processor;
     QTimer *timer = new QTimer(this);
-    QList<QString> serialport_list;             //可用串口列表
-    bool serial_state;                          //串口状态
-    QString  serial_choice;                     //从串口下拉列表中选择的串口名
+    QList<QString> serialport_list;
+    bool serial_state;
+    QString  serial_choice;
     QSerialPort *serialport = new QSerialPort();
     QList<int> id_list;
     int max_line_id;
@@ -39,17 +42,18 @@ private:
         QVector<double> y;
     }line;
     QList<line> line_list;
+    bool reply_flag,autosend_flag;
+    QCPCurve *trajectory;
     void widgetInit();
     bool openSerialport();
     void closeSerialport();
-    void writeSerialport(quint8 *data,int count);
-    int addLine(int id);
 
 private slots:
    void changeSerialState();
    void searchSerialport();
    void recordSerialChoice(int choice);
    void readSerialport();
-   void syncCoordinateAxis();
+   void updateMapSize();
+   void updateGraph();
 };
 #endif // MAINWINDOW_H
